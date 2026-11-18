@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+  # --- שירות השרת ---
+  server:
+    build: ./server
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./server:/app
+    restart: unless-stopped
+
+  # --- שירות הלקוח ---
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_PORT=0
+      - WATCHPACK_POLLING=true
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
