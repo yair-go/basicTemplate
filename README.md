@@ -90,7 +90,8 @@ Supabase הוא שירות BaaS (Backend as a Service) — בסיס נתונים
 4. בחרו שם משמעותי לפרויקט, הגדירו סיסמה לבסיס הנתונים (**שמרו אותה!**) ובחרו אזור קרוב (Region — למשל `eu-central-1`).
 5. לחצו **Create new project** והמתינו כחצי דקה.
 6. ב-**Project overview**, בתפריט הנפתח שליד המילה **copy**, תמצאו את ה-**Project URL**.
-7. תחת **Project Settings → API Keys** לחצו על **view legacy API keys**. המפתח שמתחיל ב-`ey…` הוא ה-**anon public key**.
+7. תחת **Project Settings → API Keys** לחצו על **view legacy API keys**. ליד המפתח **service_role** לחצו **Reveal** כדי לחשוף אותו, ואז העתיקו אותו (מתחיל ב-`ey…`).
+   > ⚠️ זהו מפתח סודי שעוקף את הגבלות האבטחה של הטבלאות. הוא נשמר רק בקובץ `.env` של השרת, ולעולם לא בקוד הלקוח או ב-GitHub.
 
 את שני הערכים מסעיפים 6 ו-7 נצטרך לקובץ `.env`.
 
@@ -108,6 +109,8 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT NOW()
 );
 ```
+
+4. אם מופיע חלון אזהרה על Row Level Security, בחרו **Run and enable RLS**, כדי שרק השרת שלנו (עם מפתח ה-service_role) יוכל לגשת לטבלה.
 
 הסבר השדות:
 - `id` — מספר מזהה ייחודי שגדל אוטומטית (כמו index במערך)
@@ -129,7 +132,7 @@ copy .env.example .env
 
 ```
 SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
-SUPABASE_KEY=YOUR_ANON_PUBLIC_KEY
+SUPABASE_KEY=YOUR_SERVICE_ROLE_KEY
 ```
 
 ## שלב 4 — הרצה ובדיקה
@@ -177,7 +180,8 @@ docker compose down
 | שגיאה | סיבה אפשרית | פתרון |
 |-------|-------------|-------|
 | `לא ניתן להתחבר לשרת` / connection refused | השרת לא עלה | בדקו את לוגי השרת בטרמינל |
-| invalid API key | `SUPABASE_KEY` שגוי בקובץ `.env` | העתיקו שוב את ה-anon key (שלב 1, סעיף 7) |
+| invalid API key | `SUPABASE_KEY` שגוי בקובץ `.env` | העתיקו שוב את מפתח ה-service_role (שלב 1, סעיף 7) |
+| `new row violates row-level security policy` (קוד `42501`) | בקובץ `.env` מוגדר ה-anon key במקום ה-service_role | החליפו למפתח ה-service_role (שלב 1, סעיף 7) |
 | port already in use | פורט 3000 או 8000 תפוס | סגרו תוכנית אחרת שמשתמשת בפורט |
 | table does not exist | טבלת `users` לא נוצרה | הריצו שוב את ה-SQL מ[שלב 2](#שלב-2--יצירת-טבלת-users) |
 
