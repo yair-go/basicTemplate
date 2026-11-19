@@ -132,21 +132,54 @@ SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
 SUPABASE_KEY=YOUR_ANON_PUBLIC_KEY
 ```
 
-## שלב 4 — הרצה
+## שלב 4 — הרצה ובדיקה
+
+### בדיקה לפני ההרצה
+
+ודאו שקובץ `.env` קיים בתיקייה הראשית (ליד `docker-compose.yml`) ושמילאתם בו את שני הערכים מ-Supabase. שאר הקבצים כבר נמצאים ב-repo (ראו [מבנה הפרויקט](#מבנה-הפרויקט)).
+
+### בנייה והרצה
+
+פתחו טרמינל בתיקייה הראשית של הפרויקט והריצו:
 
 ```bash
 docker compose up --build
 ```
 
-- לקוח: http://localhost:3000
-- שרת: http://localhost:8000
-- תיעוד API אוטומטי: http://localhost:8000/docs
+ההרצה הראשונה לוקחת 3–5 דקות, כי Docker מוריד images ומתקין תלויות. יופיע הרבה פלט, וזה תקין. חפשו שורות כמו:
 
-עצירה:
+```
+server-1  | INFO:     Uvicorn running on http://0.0.0.0:8000
+client-1  | Compiled successfully!
+client-1  | You can now view auth-client in the browser.
+```
+
+### בדיקה בדפדפן
+
+1. גשו ל-http://localhost:3000 — יוצג מסך הכניסה / הרשמה.
+2. עברו להרשמה ונסו להירשם עם מייל וסיסמה.
+3. ב-Supabase, ב-**Table Editor → users**, ודאו שהמשתמש נשמר (עם סיסמה מוצפנת בעמודה `password_hash`).
+4. חזרו למסך הכניסה והיכנסו עם אותם פרטים.
+
+### בדיקת השרת ישירות
+
+- http://localhost:8000/api/health — אמור להחזיר `{"status": "ok"}`
+- http://localhost:8000/docs — ממשק אינטראקטיבי של FastAPI (Swagger) לבדיקת ה-API
+
+### עצירה
 
 ```bash
 docker compose down
 ```
+
+### שגיאות נפוצות
+
+| שגיאה | סיבה אפשרית | פתרון |
+|-------|-------------|-------|
+| `לא ניתן להתחבר לשרת` / connection refused | השרת לא עלה | בדקו את לוגי השרת בטרמינל |
+| invalid API key | `SUPABASE_KEY` שגוי בקובץ `.env` | העתיקו שוב את ה-anon key (שלב 1, סעיף 7) |
+| port already in use | פורט 3000 או 8000 תפוס | סגרו תוכנית אחרת שמשתמשת בפורט |
+| table does not exist | טבלת `users` לא נוצרה | הריצו שוב את ה-SQL מ[שלב 2](#שלב-2--יצירת-טבלת-users) |
 
 ---
 
