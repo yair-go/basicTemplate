@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
+import Hello from './Hello';
 
 // כתובת השרת — React מדבר עם השרת דרך כתובת זו
 const SERVER_URL = 'http://localhost:8000';
@@ -47,25 +49,27 @@ function App() {
     }
   };
 
-  // אם המשתמש מחובר — מציגים מסך ברוך הבא
-  if (loggedInUser) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.card}>
-          <h1 style={styles.title}>✅ ברוך הבא!</h1>
-          <p style={{ textAlign: 'center', color: '#555' }}>{loggedInUser}</p>
-          <button
-            style={styles.button}
-            onClick={() => { setLoggedInUser(null); setEmail(''); setPassword(''); setMessage(''); }}
-          >
-            התנתק
-          </button>
-        </div>
+  // מסך ברוך הבא — למשתמש מחובר
+  const welcomePage = (
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h1 style={styles.title}>✅ ברוך הבא!</h1>
+        <p style={{ textAlign: 'center', color: '#555' }}>{loggedInUser}</p>
+        <Link to="/hello" style={{ textAlign: 'center', color: '#4f46e5' }}>
+          לדף hello
+        </Link>
+        <button
+          style={styles.button}
+          onClick={() => { setLoggedInUser(null); setEmail(''); setPassword(''); setMessage(''); }}
+        >
+          התנתק
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
 
-  return (
+  // מסך כניסה / הרשמה
+  const loginPage = (
     <div style={styles.container}>
       <div style={styles.card}>
         <h1 style={styles.title}>
@@ -109,6 +113,17 @@ function App() {
         </p>
       </div>
     </div>
+  );
+
+  // הדפים של האפליקציה — כל כתובת מציגה רכיב אחר
+  return (
+    <Routes>
+      <Route path="/" element={loggedInUser ? welcomePage : loginPage} />
+      <Route
+        path="/hello"
+        element={<Hello user={loggedInUser} serverUrl={SERVER_URL} styles={styles} />}
+      />
+    </Routes>
   );
 }
 

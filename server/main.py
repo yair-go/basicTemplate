@@ -86,3 +86,9 @@ def login(credentials: UserCredentials):
 @app.get("/api/health")
 def health_check():
     return {"status": "ok"}
+
+
+@app.get("/api/hello/{name}")
+def hello(name: str):
+    return {"message": "hello", "name": name}
+    
