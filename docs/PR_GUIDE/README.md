@@ -155,7 +155,7 @@ git branch
 
 עכשיו עובדים כרגיל: עורכים קבצים, מריצים ובודקים. בדוגמה שלנו הוספנו שני דברים.
 
-**בשרת** ([server/main.py](../server/main.py)), נקודת קצה חדשה:
+**בשרת** ([server/main.py](../../server/main.py)), נקודת קצה חדשה:
 
 ```python
 @app.get("/api/hello/{name}")
